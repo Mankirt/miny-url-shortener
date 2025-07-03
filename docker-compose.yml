@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: miny-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - PORT=3000
+      - PGHOST=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=url_shortener
+      - PGPORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  postgres:
+    image: postgres:14
+    container_name: miny-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: url_shortener
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    container_name: miny-redis
+    ports:
+      - "6379:6379"
