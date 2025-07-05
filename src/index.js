@@ -14,3 +14,12 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Miny is running on port ${PORT}`);
 });
+
+const db = require('./db');
+
+db.query('SELECT NOW()')
+  .then(res => console.log('DB connected:', res.rows[0]))
+  .catch(err => console.error('DB connection error:', err));
+
+
+
