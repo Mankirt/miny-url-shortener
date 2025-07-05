@@ -47,4 +47,26 @@ router.post('/shorten', async (req, res) => {
     
 });
 
+router.get('/:short_code', async (req, res) => {
+    const {short_code} = req.params;
+
+    try{
+
+        const result = await db.query(
+            'SELECT original_url FROM urls WHERE short_code = $1',
+            [short_code]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({error: "URL not found"});
+        }
+
+        const original_url = result.rows[0].original_url;
+        res.redirect(original_url);
+    } catch (error) {
+        console.error("Error retrieving original URL:", error);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
 module.exports = router;
