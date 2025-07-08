@@ -5,6 +5,8 @@ const db  = require('../db');
 
 const crypto = require('crypto');
 
+const redisClient = require('../redisClient');
+
 function generateShortUrl() {
     return crypto.randomBytes(3).toString('base64url'); 
 }
@@ -13,7 +15,15 @@ function generateShortUrl() {
 router.post('/shorten', async (req, res) => {
     const { original_url } = req.body;
 
-    
+    try{
+        const cachedShortCode = await redisClient.get(original_url);
+        if (cachedShortCode){
+            const short_url = `${req.protocol}://${req.get('host')}/${cachedShortCode}`;
+            return res.status(200).json({short_url})
+        }
+    }catch (err){
+        console.error("Refis GET error:'", err);
+    }
 
     //Basic validation
     if(!original_url || !original_url.startsWith('http')) {
@@ -26,6 +36,11 @@ router.post('/shorten', async (req, res) => {
             );
         if (existing.rows.length > 0) {
             const short_url = `${req.protocol}://${req.get('host')}/${existing.rows[0].short_code}`;
+            try {
+                await redisClient.set(original_url, existing.rows[0].short_code);
+                } catch (err) {
+                console.error('Redis SET (from DB) error:', err);
+                }
             return res.status(200).json({ short_url });
         }
     } catch (error) {
@@ -38,6 +53,11 @@ router.post('/shorten', async (req, res) => {
         await db.query(
         'INSERT INTO urls (original_url, short_code) VALUES ($1, $2)', [original_url, short_code]
         );
+        try{
+            await redisClient.set(original_url, short_code);
+        }catch(err){
+            console.error("Redis SET error:", err);
+        }
         const short_url = `${req.protocol}://${req.get('host')}/${short_code}`;
         res.status(201).json({short_url});
     } catch (error) {
