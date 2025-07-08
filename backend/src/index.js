@@ -2,9 +2,10 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-
+const shortenRouter = require('./routes/shorten');
 app.use(express.json());
-
+app.use('/api', shortenRouter);
+app.use('/', shortenRouter);
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).send('Miny is healthy!');
