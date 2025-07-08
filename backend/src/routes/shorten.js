@@ -69,7 +69,14 @@ router.post('/shorten', async (req, res) => {
 
 router.get('/:short_code', async (req, res) => {
     const {short_code} = req.params;
-
+    try{
+        const cachedUrl = await redisClient.get(short_code);
+        if (cachedUrl) {
+            return res.redirect(cachedUrl);
+        }
+    }catch (err){
+        console.error("Redis GET error:", err);
+    }
     try{
 
         const result = await db.query(
@@ -80,7 +87,12 @@ router.get('/:short_code', async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).json({error: "URL not found"});
         }
-
+        // Store the original URL in Redis for future requests
+        try{
+            await redisClient.set(short_code, result.rows[0].original_url);
+        } catch (err) {
+            console.error("Redis SET error:", err);
+        }
         const original_url = result.rows[0].original_url;
         res.redirect(original_url);
     } catch (error) {
