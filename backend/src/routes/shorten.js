@@ -7,10 +7,24 @@ const crypto = require('crypto');
 
 const redisClient = require('../redisClient');
 
+const kafka = require('../kafkaMock');
+
 function generateShortUrl() {
     return crypto.randomBytes(3).toString('base64url'); 
 }
 
+async function generateUniqueShortCode(){
+    let shortCode;
+    while (true){
+        shortCode = generateShortUrl();
+        check = await db.query(
+            "Select short_code from urls where short_code=$1",[shortCode]
+        );
+        if (check.rows.length == 0){
+            return shortCode;
+        }
+    }
+}
 
 router.post('/shorten', async (req, res) => {
     const { original_url } = req.body;
@@ -48,11 +62,12 @@ router.post('/shorten', async (req, res) => {
         return res.status(500).json({error: "Internal server error"});
     }
 
-    const short_code = generateShortUrl();
+    const short_code = await generateUniqueShortCode();
     try{
         await db.query(
         'INSERT INTO urls (original_url, short_code) VALUES ($1, $2)', [original_url, short_code]
         );
+        kafka.send("url_created", { original_url, short_code, timestamp: Date.now() });
         try{
             await redisClient.set(original_url, short_code, {EX:3600});
         }catch(err){
@@ -72,6 +87,7 @@ router.get('/:short_code', async (req, res) => {
     try{
         const cachedUrl = await redisClient.get(short_code);
         if (cachedUrl) {
+            kafka.send("url_visited", { short_code, timestamp: Date.now(), ip: req.ip });
             return res.redirect(cachedUrl);
         }
     }catch (err){
@@ -94,6 +110,7 @@ router.get('/:short_code', async (req, res) => {
             console.error("Redis SET error:", err);
         }
         const original_url = result.rows[0].original_url;
+        kafka.send("url_visited", { short_code, timestamp: Date.now(), ip: req.ip });
         res.redirect(original_url);
     } catch (error) {
         console.error("Error retrieving original URL:", error);
