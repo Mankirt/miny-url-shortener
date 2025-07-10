@@ -20,7 +20,7 @@ async function generateUniqueShortCode(){
         check = await db.query(
             "Select short_code from urls where short_code=$1",[shortCode]
         );
-        if (check.row.length == 0){
+        if (check.rows.length == 0){
             return shortCode;
         }
     }
