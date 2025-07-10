@@ -11,6 +11,18 @@ function generateShortUrl() {
     return crypto.randomBytes(3).toString('base64url'); 
 }
 
+async function generateUniqueShortCode(){
+    let shortCode;
+    while (true){
+        shortCode = generateShortUrl();
+        check = await db.query(
+            "Select short_code from urls where short_code=$1",[shortCode]
+        );
+        if (check.row.length == 0){
+            return shortCode;
+        }
+    }
+}
 
 router.post('/shorten', async (req, res) => {
     const { original_url } = req.body;
@@ -48,7 +60,7 @@ router.post('/shorten', async (req, res) => {
         return res.status(500).json({error: "Internal server error"});
     }
 
-    const short_code = generateShortUrl();
+    const short_code = await generateUniqueShortCode();
     try{
         await db.query(
         'INSERT INTO urls (original_url, short_code) VALUES ($1, $2)', [original_url, short_code]
