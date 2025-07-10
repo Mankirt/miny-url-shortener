@@ -37,7 +37,7 @@ router.post('/shorten', async (req, res) => {
         if (existing.rows.length > 0) {
             const short_url = `${req.protocol}://${req.get('host')}/${existing.rows[0].short_code}`;
             try {
-                await redisClient.set(original_url, existing.rows[0].short_code);
+                await redisClient.set(original_url, existing.rows[0].short_code,{EX: 3600});
                 } catch (err) {
                 console.error('Redis SET (from DB) error:', err);
                 }
@@ -54,7 +54,7 @@ router.post('/shorten', async (req, res) => {
         'INSERT INTO urls (original_url, short_code) VALUES ($1, $2)', [original_url, short_code]
         );
         try{
-            await redisClient.set(original_url, short_code);
+            await redisClient.set(original_url, short_code, {EX:3600});
         }catch(err){
             console.error("Redis SET error:", err);
         }
@@ -89,7 +89,7 @@ router.get('/:short_code', async (req, res) => {
         }
         // Store the original URL in Redis for future requests
         try{
-            await redisClient.set(short_code, result.rows[0].original_url);
+            await redisClient.set(short_code, result.rows[0].original_url, {EX:3600});
         } catch (err) {
             console.error("Redis SET error:", err);
         }
