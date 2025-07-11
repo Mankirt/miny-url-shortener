@@ -7,7 +7,7 @@ const statsRouter = require('./routes/stats');
 app.use(express.json());
 app.use('/api', shortenRouter);
 app.use('/', shortenRouter);
-app.use('/api', statsRouter);
+app.use('/api/stats', statsRouter);
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).send('Miny is healthy!');
