@@ -21,8 +21,12 @@ useEffect(() => {
     }
   };
 
-  fetchStats();
+  fetchStats(); // First fetch
+
+  const interval = setInterval(fetchStats, 5000); // Auto-refresh every 5s
+  return () => clearInterval(interval); // Clean up
 }, []);
+
 
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
   if (!stats) return <p>Loading analytics...</p>;
