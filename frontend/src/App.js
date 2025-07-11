@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
+import AnalyticsPanel from './components/AnalyticsPanel';
+import SimulateTrafficPanel from './components/SimulateTrafficPanel';
 
 function App() {
   const [originalUrl, setOriginalUrl] = useState('');
@@ -62,7 +64,15 @@ function App() {
       {error && (
         <p style={{ color: 'red' }}>{error}</p>
       )}
+    
+    <div style={{ marginTop: '2rem' }} className="Analytics">
+      <AnalyticsPanel />
+      <SimulateTrafficPanel />
     </div>
+    
+    </div>
+    
+    
   );
 }
 
