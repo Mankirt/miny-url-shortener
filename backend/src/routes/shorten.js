@@ -33,6 +33,12 @@ router.post('/shorten', async (req, res) => {
         const cachedShortCode = await redisClient.get(original_url);
         if (cachedShortCode){
             const short_url = `${req.protocol}://${req.get('host')}/${cachedShortCode}`;
+            kafka.send("url_lookup", {
+                original_url,
+                short_code: cachedShortCode,
+                timestamp: Date.now(),
+                source: "redis",
+            });
             return res.status(200).json({short_url})
         }
     }catch (err){
@@ -55,6 +61,12 @@ router.post('/shorten', async (req, res) => {
                 } catch (err) {
                 console.error('Redis SET (from DB) error:', err);
                 }
+             kafka.send("url_lookup", {
+                    original_url,
+                    short_code: existing.rows[0].short_code,
+                    timestamp: Date.now(),
+                    source: "db",
+                });
             return res.status(200).json({ short_url });
         }
     } catch (error) {
@@ -87,7 +99,7 @@ router.get('/:short_code', async (req, res) => {
     try{
         const cachedUrl = await redisClient.get(short_code);
         if (cachedUrl) {
-            kafka.send("url_visited", { short_code, timestamp: Date.now(), ip: req.ip });
+            kafka.send("url_visited", { short_code, source: "redis", timestamp: Date.now(), ip: req.ip });
             return res.redirect(cachedUrl);
         }
     }catch (err){
@@ -110,7 +122,7 @@ router.get('/:short_code', async (req, res) => {
             console.error("Redis SET error:", err);
         }
         const original_url = result.rows[0].original_url;
-        kafka.send("url_visited", { short_code, timestamp: Date.now(), ip: req.ip });
+        kafka.send("url_visited", { short_code, source: "db", timestamp: Date.now(), ip: req.ip });
         res.redirect(original_url);
     } catch (error) {
         console.error("Error retrieving original URL:", error);
