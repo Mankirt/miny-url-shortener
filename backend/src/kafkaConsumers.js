@@ -3,6 +3,7 @@ const kafka = require('./kafkaMock');
 
 const urlCreatedEvents = [];
 const urlVisitedEvents = [];
+const urlLookupEvents = [];
 
 kafka.subscribe("url_created", (message) => {
   console.log("[Consumer] URL Created Event Received:", message);
@@ -12,6 +13,11 @@ kafka.subscribe("url_created", (message) => {
 kafka.subscribe("url_visited", (message) => {
   console.log("[Consumer] URL Visited Event Received:", message);
   urlVisitedEvents.push({ ...message, receivedAt: Date.now() });
+});
+
+kafka.subscribe("url_lookup", (message) => {
+  console.log("[Consumer] URL Lookup Event Received:", message);
+  urlLookupEvents.push({ ...message, receivedAt: Date.now() });
 });
 
 // Clear events every 1 hour (3600000 ms)
@@ -25,5 +31,6 @@ setInterval(() => {
 // Export arrays to use in API for stats/dashboard
 module.exports = {
   urlCreatedEvents,
-  urlVisitedEvents
+  urlVisitedEvents,
+  urlLookupEvents
 };
