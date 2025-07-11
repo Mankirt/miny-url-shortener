@@ -4,10 +4,14 @@ const express = require('express');
 const app = express();
 const shortenRouter = require('./routes/shorten');
 const statsRouter = require('./routes/stats');
+const simulateRouter = require('./routes/simulate');
+
+
 app.use(express.json());
 app.use('/api', shortenRouter);
 app.use('/', shortenRouter);
 app.use('/api/stats', statsRouter);
+app.use('/api/simulate', simulateRouter);
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).send('Miny is healthy!');
