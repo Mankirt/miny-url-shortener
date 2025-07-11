@@ -9,7 +9,7 @@ function generateRandomUrl() {
 
 router.get('/', async (req, res) => {
   const count = parseInt(req.query.count) || 50;
-  const baseUrl = req.protocol + '://' + req.get('host');
+  const baseUrl = `http://localhost:3000`;
 
   const promises = [];
 
