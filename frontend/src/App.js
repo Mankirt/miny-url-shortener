@@ -36,10 +36,11 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="main-container">
+      <div className="left-panel">
       <h1>Miny URL Shortener</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="shorten-form">
         <input
           type="url"
           placeholder="Enter a long URL"
@@ -47,29 +48,44 @@ function App() {
           onChange={(e) => setOriginalUrl(e.target.value)}
           required
         />
-        <button type="submit">Shorten</button>
+
+        <div className="shorten-row">
+          <button type="submit">Shorten</button>
+
+          {shortUrl && (
+            <span className="short-url-inline">
+              <a href={shortUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
+              <button
+                className="copy-btn"
+                onClick={() => {
+                  navigator.clipboard.writeText(shortUrl);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+              >
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+            </span>
+          )}
+        </div>
       </form>
 
-      {shortUrl && (
-        <p>
-          Short URL: <a href={shortUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
-          <button onClick={()=> {
-            navigator.clipboard.writeText(shortUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-          }}>{copied? 'URL Copied!' :'Copy'}</button>
-        </p>
-      )}
+
+
+      
+      
 
       {error && (
         <p style={{ color: 'red' }}>{error}</p>
       )}
+        <div style={{ marginTop: '2rem' }}>
+          <SimulateTrafficPanel />
+        </div>
+      </div>
     
-    <div style={{ marginTop: '2rem' }} className="Analytics">
-      <AnalyticsPanel />
-      <SimulateTrafficPanel />
-    </div>
-    
+     <div className="right-panel">
+        <AnalyticsPanel />
+      </div>
     </div>
     
     

@@ -21,7 +21,7 @@ function SimulateTrafficPanel() {
   };
 
   return (
-    <div style={{ marginTop: '2rem' }}>
+    <div style={{ marginTop: '9rem' }}>
       <h2>Simulate Heavy Traffic</h2>
       <input
         type="number"
