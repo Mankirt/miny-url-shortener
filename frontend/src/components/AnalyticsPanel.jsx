@@ -40,7 +40,7 @@ useEffect(() => {
       <p><strong>From DB:</strong> {stats.dbHitCount}</p>
       <p><strong>Total Lookups:</strong> {stats.urlLookupCount}</p>
 
-      <h3>Recent Activity</h3>
+      {/* <h3>Recent Activity</h3>
       <div style={{ display: 'flex', gap: '2rem' }}>
         <div>
           <h4>Created</h4>
@@ -66,7 +66,7 @@ useEffect(() => {
             ))}
           </ul>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

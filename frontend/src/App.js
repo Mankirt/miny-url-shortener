@@ -8,6 +8,8 @@ function App() {
   const [shortUrl, setShortUrl] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [analyticsPopupVisible, setAnalyticsPopupVisible] = useState(false);
+  const [stimuateTrafficPopupVisible, setSimulateTrafficPopupVisible] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
@@ -36,10 +38,11 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="main-container">
+      <div className="left-panel">
       <h1>Miny URL Shortener</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="shorten-form">
         <input
           type="url"
           placeholder="Enter a long URL"
@@ -47,29 +50,60 @@ function App() {
           onChange={(e) => setOriginalUrl(e.target.value)}
           required
         />
-        <button type="submit">Shorten</button>
+
+        <div className="shorten-row">
+          <button type="submit">Shorten</button>
+
+          {shortUrl && (
+            <span className="short-url-inline">
+              <a href={shortUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
+              <button
+                className="copy-btn"
+                onClick={() => {
+                  navigator.clipboard.writeText(shortUrl);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+              >
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+            </span>
+          )}
+        </div>
       </form>
 
-      {shortUrl && (
-        <p>
-          Short URL: <a href={shortUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
-          <button onClick={()=> {
-            navigator.clipboard.writeText(shortUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-          }}>{copied? 'URL Copied!' :'Copy'}</button>
-        </p>
-      )}
+
+
+      
+      
 
       {error && (
         <p style={{ color: 'red' }}>{error}</p>
       )}
+        <button className='analytics-btn' onClick={() => setAnalyticsPopupVisible(true)}>View Analytics</button>
+        <button className='simulate-traffic-btn' onClick={() => setSimulateTrafficPopupVisible(true)}>Simulate Traffic</button>
+      </div>
     
-    <div style={{ marginTop: '2rem' }} className="Analytics">
-      <AnalyticsPanel />
-      <SimulateTrafficPanel />
-    </div>
+    {analyticsPopupVisible && (
+      <div className='overlay'>
+        <div className='popup'>
+          <button className='close-btn' onClick={() => setAnalyticsPopupVisible(false)}>X</button>
+          <AnalyticsPanel />
+        </div>
+      </div>
+    )}
+
+    {stimuateTrafficPopupVisible && (
+      <div className='overlay'>
+        <div className='popup'>
+          <button className='close-btn' onClick={() => setSimulateTrafficPopupVisible(false)}>X</button>
+          <SimulateTrafficPanel />
+        </div>
+      </div>
+    )}
+
     
+     
     </div>
     
     
