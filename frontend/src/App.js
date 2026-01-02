@@ -8,6 +8,8 @@ function App() {
   const [shortUrl, setShortUrl] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [analyticsPopupVisible, setAnalyticsPopupVisible] = useState(false);
+  const [stimuateTrafficPopupVisible, setSimulateTrafficPopupVisible] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
@@ -78,14 +80,30 @@ function App() {
       {error && (
         <p style={{ color: 'red' }}>{error}</p>
       )}
-        <div style={{ marginTop: '2rem' }}>
+        <button className='analytics-btn' onClick={() => setAnalyticsPopupVisible(true)}>View Analytics</button>
+        <button className='simulate-traffic-btn' onClick={() => setSimulateTrafficPopupVisible(true)}>Simulate Traffic</button>
+      </div>
+    
+    {analyticsPopupVisible && (
+      <div className='overlay'>
+        <div className='popup'>
+          <button className='close-btn' onClick={() => setAnalyticsPopupVisible(false)}>X</button>
+          <AnalyticsPanel />
+        </div>
+      </div>
+    )}
+
+    {stimuateTrafficPopupVisible && (
+      <div className='overlay'>
+        <div className='popup'>
+          <button className='close-btn' onClick={() => setSimulateTrafficPopupVisible(false)}>X</button>
           <SimulateTrafficPanel />
         </div>
       </div>
+    )}
+
     
-     <div className="right-panel">
-        <AnalyticsPanel />
-      </div>
+     
     </div>
     
     
