@@ -145,4 +145,12 @@ a:hover {
   max-width: 90%;     
   text-align: center;
 }
+.button-group {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.button-group button {
+  margin: 0 10px; /* space between buttons */
+}
 
