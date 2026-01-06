@@ -80,8 +80,11 @@ function App() {
       {error && (
         <p style={{ color: 'red' }}>{error}</p>
       )}
-        <button className='analytics-btn' onClick={() => setAnalyticsPopupVisible(true)}>View Analytics</button>
-        <button className='simulate-traffic-btn' onClick={() => setSimulateTrafficPopupVisible(true)}>Simulate Traffic</button>
+        <div className='button-group'>
+          <button className='analytics-btn' onClick={() => setAnalyticsPopupVisible(true)}>View Analytics</button>
+          <button className='simulate-traffic-btn' onClick={() => setSimulateTrafficPopupVisible(true)}>Simulate Traffic</button>
+        
+      </div>
       </div>
     
     {analyticsPopupVisible && (
