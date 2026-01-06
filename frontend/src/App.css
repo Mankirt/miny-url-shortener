@@ -27,13 +27,16 @@ h1 {
 
 .left-panel,
 .right-panel {
-  flex: 1;
-  min-width: 350px;
   background-color: #ffffff;
-  border-radius: 12px;
-  padding: 1.8rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease-in-out;
+  position: fixed;
+  width: 80%;
+  height: 100%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  padding: 5%;
+  align-items: center;
+  justify-content: center;
 }
 
 .left-panel:hover,
