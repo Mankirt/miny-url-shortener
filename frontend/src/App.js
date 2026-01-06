@@ -87,8 +87,10 @@ function App() {
     {analyticsPopupVisible && (
       <div className='overlay'>
         <div className='popup'>
-          <button className='close-btn' onClick={() => setAnalyticsPopupVisible(false)}>X</button>
           <AnalyticsPanel />
+          <div className='popup-footer' >
+          <button className='close-btn' onClick={() => setAnalyticsPopupVisible(false)}>Close</button>
+          </div>
         </div>
       </div>
     )}
@@ -96,8 +98,9 @@ function App() {
     {stimuateTrafficPopupVisible && (
       <div className='overlay'>
         <div className='popup'>
-          <button className='close-btn' onClick={() => setSimulateTrafficPopupVisible(false)}>X</button>
           <SimulateTrafficPanel />
+          <button className='close-btn' onClick={() => setSimulateTrafficPopupVisible(false)}>Close</button>
+          
         </div>
       </div>
     )}
